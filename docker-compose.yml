@@ -14,4 +14,6 @@ services:
     build:
       context: ./palworld
       dockerfile: ./Dockerfile
+      args:
+        PALWORLD_CONFIG: ${PALWORLD_CONFIG}
     restart: no

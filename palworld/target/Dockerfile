@@ -16,5 +16,4 @@ ENTRYPOINT bash ./steamcmd.sh +force_install_dir /app +login anonymous +app_upda
            chmod a+w /app/Pal/Saved && \
            chown -R serveruser:serveruser /app && \
            chmod +x "/app/PalServer.sh" && \
-           RUN chmod -R 444 /app/Pal/Saved/Config/LinuxServer && \
            su - serveruser -c "/app/PalServer.sh -port 8211 -players 32 -useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS"
