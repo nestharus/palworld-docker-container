@@ -13,9 +13,11 @@ RUN useradd -ms /bin/bash serveruser
 
 COPY ../target/app /app
 
+RUN chmod a+w /app/Pal/Saved
+RUN chmod +x "/app/PalServer.sh"
+RUN chown -R serveruser:serveruser /app
+
 EXPOSE 8211/udp
 EXPOSE 25575/tcp
 
-ENTRYPOINT chmod a+w /app/Pal/Saved && \
-           chmod +x "/app/PalServer.sh" && \
-           su - serveruser -c "/app/PalServer.sh -port 8211 -players ${PALWORLD_PLAYERS} -useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS"
+ENTRYPOINT su - serveruser -c "/app/PalServer.sh -port 8211 -players ${PALWORLD_PLAYERS} -useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS"
