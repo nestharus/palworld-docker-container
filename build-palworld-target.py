@@ -14,4 +14,4 @@ for config_file in config_files:
                 os.environ[key] = value
 
 # Run docker-compose up -d
-subprocess.run(['docker-compose', 'up', '-d', 'palworld-target'])
+subprocess.run(['docker-compose', 'up', '-d', 'palworld-target'], cwd='palworld-target')
