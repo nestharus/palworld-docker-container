@@ -1,21 +1,18 @@
 FROM debian:bookworm-slim
 LABEL authors="nestharus"
 
-ARG PALWORLD_CONFIG
+COPY /target/app /app
 
-ENV PALWORLD_CONFIG ${PALWORLD_CONFIG}
-ENV PALWORLD_PLAYERS 32
+VOLUME ["/app/Pal/Saved/SaveGames"]
+VOLUME ["/app/Pal/Saved/Config"]
 
 RUN apt-get update && \
 	apt-get -y install --no-install-recommends lib32gcc-s1 lib32stdc++6 lib32z1 && \
 	rm -rf /var/lib/apt/lists/*
 
-VOLUME ["/app/Pal/Saved/SaveGames"]
-
 RUN useradd -ms /bin/bash serveruser
 
-COPY /target/app /app
-COPY ${PALWORLD_CONFIG_DATA} /app/Pal/Saved/Config
+ENV PALWORLD_PLAYERS 32
 
 RUN chmod a+w /app/Pal/Saved/SaveGames
 RUN chmod +x "/app/PalServer.sh"
