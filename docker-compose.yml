@@ -7,7 +7,7 @@ services:
       context: ./nginx
       dockerfile: ./Dockerfile
       args:
-        PALWORLD_ROUTE: palworld
+        PALWORLD_ROUTE: ${PALWORLD_ROUTE}
   palworld:
     image: ${DOCKER_REPO}:palworld
     container_name: palworld
