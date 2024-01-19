@@ -9,11 +9,9 @@ RUN apt-get update && \
 
 VOLUME ["/app"]
 
-RUN useradd -ms /bin/bash serveruser
-
 ENTRYPOINT bash ./steamcmd.sh +force_install_dir /app +login anonymous +app_update ${STEAMAPPID} validate +quit && \
            mkdir -p /app/Pal/Saved && \
            chmod a+w /app/Pal/Saved && \
-           chown -R serveruser:serveruser /app && \
+           chown -R steam:steam /app && \
            chmod +x "/app/PalServer.sh" && \
-           su - serveruser -c "/app/PalServer.sh -port 8211 -players 32 -useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS"
+           su steam -c "/app/PalServer.sh -port 8211 -players 4"

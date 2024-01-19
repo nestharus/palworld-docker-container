@@ -1,13 +1,13 @@
 version: "3.9"
 services:
-  nginx:
-    image: ${DOCKER_REPO}:nginx
-    container_name: nginx
-    build:
-      context: ./nginx
-      dockerfile: ./Dockerfile
-      args:
-        PALWORLD_ROUTE: ${PALWORLD_ROUTE}
+#  nginx:
+#    image: ${DOCKER_REPO}:nginx
+#    container_name: nginx
+#    build:
+#      context: ./nginx
+#      dockerfile: ./Dockerfile
+#      args:
+#        PALWORLD_ROUTE: ${PALWORLD_ROUTE}
   palworld:
     image: ${DOCKER_REPO}:palworld
     container_name: palworld

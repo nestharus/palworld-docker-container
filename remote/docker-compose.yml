@@ -1,33 +1,42 @@
 version: "3.9"
 
 services:
-  nginx:
-    image: ${DOCKER_REPO}:nginx
-    ports:
-      - "80:80"
-    networks:
-      - backbone
+#  nginx:
+#    image: ${DOCKER_REPO}:nginx
+#    ports:
+#      - "80:80/tcp"
+#      - "${PUBLIC_PORT}:${PUBLIC_PORT}/udp"
+#      - "8200:8300/udp"
+#      - "17000:17100/tcp"
+#      - "25500:25600/tcp"
+#    networks:
+#      - backbone
   palworld:
     environment:
-      - PALWORLD_PLAYERS=32
+      - PALWORLD_PLAYERS=${PALWORLD_PLAYERS}
+      - COMMUNITY=${COMMUNITY}
+      - SERVER_PASSWORD=${SERVER_PASSWORD}
+      - SERVER_NAME=${SERVER_NAME}
+      - PUBLIC_IP=${PUBLIC_IP}
+      - PUBLIC_PORT=${PUBLIC_PORT}
+      - MULTITHREADING=${MULTITHREADING}
     image: ${DOCKER_REPO}:palworld
+    ports:
+      #- "${PUBLIC_PORT}:${PUBLIC_PORT}/udp"
+      - "8200-8300:8200-8300/udp"
+      - "17000-17100:17000-17100/tcp"
+      - "25500-25600:25500-25600/tcp"
     volumes:
+      # the purpose of splitting these two up is so that
+      # configuration can be initialized into a server
       - type: volume
-        source: PALWORLD_SAVE_DATA
+        source: PALWORLD_DATA
         target: /app/Pal/Saved/SaveGames
       - type: volume
         source: PALWORLD_CONFIG
         target: /app/Pal/Saved/Config
     restart: always
-    networks:
-      - backbone
-    expose:
-      - ${PALWORLD_PLAYERS}
-
-networks:
-  backbone:
-    driver: bridge
 
 volumes:
-  PALWORLD_SAVE_DATA:
+  PALWORLD_DATA:
   PALWORLD_CONFIG:
