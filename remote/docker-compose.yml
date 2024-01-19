@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  nginx:
+    image: ${DOCKER_REPO}:nginx
+    ports:
+      - "80:80"
+    networks:
+      - backbone
+  palworld:
+    environment:
+      - PALWORLD_PLAYERS=32
+    image: ${DOCKER_REPO}:palworld
+    volumes:
+      - type: bind
+        source: ./palworld/data
+        target: /app/Pal/Saved
+    restart: always
+    networks:
+      - backbone
+    expose:
+      - ${PALWORLD_PLAYERS}
+
+networks:
+  backbone:
+    driver: bridge

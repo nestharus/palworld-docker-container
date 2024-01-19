@@ -1,0 +1,16 @@
+version: '3.9'
+
+services:
+  nightingale:
+    image: palworld:latest
+    container_name: palworld
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - type: bind
+        source: ./app
+        target: /app
+    restart: no
+    environment:
+      PALWORLD_PLAYERS: 32

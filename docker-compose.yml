@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  nginx:
+    image: ${DOCKER_REPO}:nginx
+    container_name: nginx
+    build:
+      context: ./nginx
+      dockerfile: ./Dockerfile
+    environment:
+      PALWORLD_ROUTE: palworld
+  palworld:
+    image: ${DOCKER_REPO}:palworld
+    container_name: palworld
+    build:
+      context: ./palworld
+      dockerfile: ./Dockerfile
+    restart: no
+    environment:
+      PALWORLD_PLAYERS: 32
