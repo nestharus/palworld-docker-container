@@ -12,8 +12,10 @@
 
 # RUN SERVER
 1. copy remote/docker-compose.yml to server
-2. copy config files to server
-3. `set -a; . ./docker.config; set +a`
-4. `set -a; . ./nginx.config; set +a`
-5. `set -a; . ./palworld.config; set +a`
-6. `docker-compose up`
+2. copy remove/start.sh to server
+3. copy config files to server
+4. copy palworld/config to server
+5. `./start.sh`
+
+---------------------
+`source ./env.sh`
