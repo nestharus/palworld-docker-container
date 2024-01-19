@@ -13,7 +13,7 @@ services:
     image: ${DOCKER_REPO}:palworld
     volumes:
       - type: bind
-        source: ./palworld/data
+        source: ${PALWORLD_SAVE_DATA}
         target: /app/Pal/Saved
     restart: always
     networks:

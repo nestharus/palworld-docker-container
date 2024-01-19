@@ -6,8 +6,8 @@ services:
     build:
       context: ./nginx
       dockerfile: ./Dockerfile
-    environment:
-      PALWORLD_ROUTE: palworld
+      args:
+        PALWORLD_ROUTE: palworld
   palworld:
     image: ${DOCKER_REPO}:palworld
     container_name: palworld
@@ -15,5 +15,3 @@ services:
       context: ./palworld
       dockerfile: ./Dockerfile
     restart: no
-    environment:
-      PALWORLD_PLAYERS: 32
