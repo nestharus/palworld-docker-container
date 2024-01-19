@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM debian:bookworm-slim
 LABEL authors="nestharus"
 
 ENV PALWORLD_PLAYERS 32
@@ -11,7 +11,7 @@ VOLUME ["/app/Pal/Saved"]
 
 RUN useradd -ms /bin/bash serveruser
 
-COPY ../target/app /app
+COPY /target/app /app
 
 RUN chmod a+w /app/Pal/Saved
 RUN chmod +x "/app/PalServer.sh"

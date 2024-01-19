@@ -17,6 +17,3 @@
 4. `set -a; . ./nginx.config; set +a`
 5. `set -a; . ./palworld.config; set +a`
 6. `docker-compose up`
-
-# Configuring Nginx
-- If you do not want the server to be listed then the 25575 server block can be removed.
