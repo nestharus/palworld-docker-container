@@ -11,6 +11,7 @@ services:
 #      - backbone
   palworld:
     image: ${PALWORLD_REPOSITORY}:${PALWORLD_VERSION}
+    container_name: palworld
     env_file:
       - ./palworld/env/.default.env
       - ./palworld/env/.override.env

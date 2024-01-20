@@ -3,9 +3,8 @@
 # Define the path to the file
 FILE_PATH="/palworld/Pal/Saved/Config/LinuxServer/PalWorldSettings.ini"
 
-if [ -f "$FILE_PATH" ]; then
-    chmod 744 $FILE_PATH
-fi
+mkdir -p $(dirname $FILE_PATH)
+chown steam:steam "$(dirname $FILE_PATH)"
 
 echo "[/Script/Pal.PalGameWorldSettings]" > $FILE_PATH
 
@@ -77,8 +76,7 @@ SETTINGS="${SETTINGS}BanListURL=\"${BAN_LIST_URL}\""
 SETTINGS="${SETTINGS}\)"
 
 echo "${SETTINGS}" > $FILE_PATH
-chown steam $FILE_PATH
-chmod 444 $FILE_PATH
+chown steam:steam $FILE_PATH
 
 COMMAND="/palworld/PalServer.sh"
 

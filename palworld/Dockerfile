@@ -4,29 +4,21 @@ FROM cm2network/steamcmd:root as builder
 ARG SERVER_FILES
 ARG PALWORLD_DIRECTORY
 
-COPY ${SERVER_FILES} /palworld
-
-RUN chown -R steam:steam /palworld
-RUN chmod +x "/palworld/PalServer.sh"
+COPY --chown=steam:steam ${SERVER_FILES} /palworld
 
 RUN mkdir ~/.steam
 RUN ln -s /palworld/linux64 /home/steam/.steam/sdk64
 RUN chown -R steam:steam /home/steam
 
-COPY ${PALWORLD_DIRECTORY}/scripts/start.sh /palworld-scripts
-RUN chown -R steam:steam /palworld-scripts
-RUN chmod +x "/palworld-scripts"
+COPY --chown=steam:steam --chmod=+x ${PALWORLD_DIRECTORY}/scripts ./scripts
 
-FROM cm2network/steamcmd:root
-LABEL authors="nestharus"
-COPY --from=builder /palworld /palworld
-COPY --from=builder /home/steam /home/steam
-COPY --from=builder /palworld-scripts ./scripts
+RUN chmod +x "/palworld/PalServer.sh"
 
 RUN apt-get update && \
 	apt-get -y install --no-install-recommends lib32gcc-s1 lib32stdc++6 lib32z1 && \
 	rm -rf /var/lib/apt/lists/*
 
+RUN mkdir -p /palworld/Pal/Saved/SaveGames && chown -R steam:steam /palworld/Pal/Saved/SaveGames
 VOLUME ["/palworld/Pal/Saved/SaveGames"]
 
 ENV PLAYERS 32
