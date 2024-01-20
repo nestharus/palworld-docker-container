@@ -3,6 +3,12 @@
 # Define the path to the file
 FILE_PATH="/palworld/Pal/Saved/Config/LinuxServer/PalWorldSettings.ini"
 
+owner=$(stat -c '%U' /palworld/Pal/Saved/SaveGames)
+
+if [ "$owner" != "steam" ]; then
+    chown -R steam:steam /palworld/Pal/Saved/SaveGames
+fi
+
 mkdir -p $(dirname $FILE_PATH)
 chown steam:steam "$(dirname $FILE_PATH)"
 
