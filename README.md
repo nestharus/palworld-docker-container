@@ -23,16 +23,16 @@
 1. `docker-compose down`
 
 # BACKUP SERVER WHILE RUNNING
-1. `./dump-running-volume.sh --container=palworld --volume=$(basename "$(pwd)")_PALWORLD_DATA --mount=/palworld/Pal/Saved/SaveGames`
+1. `./dump-running-volume.sh --container palworld --volume $(basename "$(pwd)")_PALWORLD_DATA --mount /palworld/Pal/Saved/SaveGames`
 
 # BACKUP VOLUME
-1. `./dump-volume.sh --volume=$(basename "$(pwd)")_PALWORLD_DATA`
+1. `./dump-volume.sh --volume $(basename "$(pwd)")_PALWORLD_DATA`
 
 # RESTORE VOLUME
-1. `./restore-volume.sh --volume=$(basename "$(pwd)")_PALWORLD_DATA`
+1. `./restore-volume.sh --volume $(basename "$(pwd)")_PALWORLD_DATA`
 
 # RESTORE VOLUME TO NEW NAME
-1. `./restore-volume.sh --from-volume=$(basename "$(pwd)")_PALWORLD_DATA --to-volume=<NEW_NAME>`
+1. `./restore-volume.sh --from-volume $(basename "$(pwd)")_PALWORLD_DATA --to-volume <NEW_NAME>`
 
 # ROLLBACK VOLUME
-1. `./restore-volume.sh --volume=$(basename "$(pwd)")_PALWORLD_DATA --dump-name=<FILENAME>`
+1. `./restore-volume.sh --volume $(basename "$(pwd)")_PALWORLD_DATA --dump-name <FILENAME>`

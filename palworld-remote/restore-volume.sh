@@ -4,19 +4,19 @@
 while (( "$#" )); do
   case "$1" in
     --volume)
-      to-volume="$2"
+      volume="$2"
       shift 2
       ;;
     --to-volume)
-      to-volume="$2"
+      to_volume="$2"
       shift 2
       ;;
     --from-volume)
-      from-volume="$2"
+      from_volume="$2"
       shift 2
       ;;
     --dump-name)
-      dump-name="$2"
+      dump_name="$2"
       shift 2
       ;;
     --) # end argument parsing
@@ -35,11 +35,11 @@ while (( "$#" )); do
 done
 
 if [ -z "${volume}" ]; then
-  if [ -z "${from-volume}" ]; then
+  if [ -z "${from_volume}" ]; then
     bad_migrate=true
   fi
 
-  if [ -z "${to-volume}" ]; then
+  if [ -z "${to_volume}" ]; then
     bad_migrate=true
   fi
 
@@ -50,11 +50,11 @@ if [ -z "${volume}" ]; then
 fi
 
 if [ -n "${volume}" ]; then
-  if [ -n "${from-volume}" ]; then
+  if [ -n "${from_volume}" ]; then
     bad_migrate=true
   fi
 
-  if [ -n "${to-volume}" ]; then
+  if [ -n "${to_volume}" ]; then
     bad_migrate=true
   fi
 
@@ -64,15 +64,18 @@ if [ -n "${volume}" ]; then
     fi
 fi
 
-volume="${volume:-${from-volume}}"
-from-volume="${from-volume:-${volume}}"
-to-volume="${to-volume:-${volume}}"
+volume="${volume:-${from_volume}}"
+from_volume="${from_volume:-${volume}}"
+to_volume="${to_volume:-${volume}}"
 
-backupdir="./volume/${from-volume}/backup"
+backupdir="./volume/${from_volume}/backup"
 
-if [ -z "${dump-name}" ]; then
-  last_file_path=$(find "${backupdir}" -type f -exec basename {} \; | sort | tail -n 1)
-  dump-name="$(basename "${last_file_path}")"
+if [ -z "${dump_name}" ]; then
+  dump_name="$(find "${backupdir}" -type f -exec basename {} \; | sort | tail -n 1)"
 fi
 
-docker run --rm -v "${volume}:/data" -v "${backupdir}:/backup-dir" ubuntu tar xvzf "/backup-dir/${dump-name}.tar.gz" -C /data
+if [[ ${dump_name: -7} != ".tar.gz" ]]; then
+    dump_name="${dump_name}.tar.gz"
+fi
+
+docker run --rm --mount source="${to_volume}",destination=/data --mount type=bind,source="$(pwd)/${backupdir}",destination=/backup-dir ubuntu bash -c "tar xvzf /backup-dir/${dump_name} -C /data ."

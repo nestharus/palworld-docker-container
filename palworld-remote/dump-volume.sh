@@ -31,9 +31,21 @@ if [ -z "$volume" ]; then
 fi
 
 backupdir="./volume/${volume}/backup"
+tempdir="./volume/${volume}/temp"
 timestamp=$(date +%Y%m%d%H%M%S)
 
 # Create the dump directory
 mkdir -p "${backupdir}"
 
-docker run --rm -v "${volume}:/data" -v "${backupdir}:/backup-dir" ubuntu tar xvzf "/backup-dir/${timestamp}.tar.gz" -C /data
+containerId=$(docker run -d --rm --mount source="${volume}",destination=/data ubuntu sleep infinity)
+
+folder_name=$(docker exec "${containerId}" bash -c "ls -d /data/*/ | head -n 1")
+
+mkdir -p "${tempdir}"
+docker cp "${containerId}:${folder_name}" "${tempdir}"
+
+tar cvzf "${backupdir}/${timestamp}.tar.gz" -C "${tempdir}" .
+
+rm -rf "${tempdir}"
+
+docker stop "${containerId}"
