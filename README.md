@@ -36,3 +36,6 @@
 
 # ROLLBACK VOLUME
 1. `./restore-volume.sh --volume PALWORLD_DATA --dump-name <FILENAME>`
+
+# DISPLAY VOLUME
+1. `./display-volume.sh PALWORLD_DATA`

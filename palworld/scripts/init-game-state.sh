@@ -27,7 +27,11 @@ if [ ! "$(ls -A /palworld/Pal/Saved/SaveGames/0)" ]; then
     exit 1
 fi
 
-GAME_STATE_PROFILE=$(find "/palworld/Pal/Saved/SaveGames/0" -type d -printf '%T@ %p\n' | sort -n | tail -1 | cut -f2- -d" ")
+echo "Mounted Game State Volume"
+
+ls -laR "/palworld/Pal/Saved/SaveGames"
+
+GAME_STATE_PROFILE=$(find "/palworld/Pal/Saved/SaveGames/0" -maxdepth 1 -type d -printf '%T@ %p\n' | sort -n | tail -1 | cut -f2- -d" ")
 GAME_STATE_PROFILE=$(basename "${GAME_STATE_PROFILE}")
 
 echo "Game State Profile Found"
