@@ -1,14 +1,6 @@
 version: "3.9"
 
 services:
-#  nginx:
-#    image: ${DOCKER_REPO}:nginx
-#    ports:
-#      - "80:80/tcp"
-#      - "${PALWORLD_PORT}:${PALWORLD_PORT}/udp"
-#      - "${PALWORLD_RCON_PORT}:${PALWORLD_RCON_PORT}/tcp"
-#    networks:
-#      - backbone
   palworld:
     image: ${PALWORLD_REPOSITORY}:${PALWORLD_VERSION}
     container_name: palworld
@@ -26,3 +18,4 @@ services:
 
 volumes:
   PALWORLD_DATA:
+    external: true

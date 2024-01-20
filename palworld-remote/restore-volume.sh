@@ -78,4 +78,4 @@ if [[ ${dump_name: -7} != ".tar.gz" ]]; then
     dump_name="${dump_name}.tar.gz"
 fi
 
-docker run --rm --mount source="${to_volume}",destination=/data --mount type=bind,source="$(pwd)/${backupdir}",destination=/backup-dir ubuntu bash -c "tar xvzf /backup-dir/${dump_name} -C /data ."
+docker run --rm --mount source="${to_volume}",destination=/data --mount type=bind,source="$(pwd)/${backupdir}",destination=/backup-dir cm2network/steamcmd:root bash -c "rm -rf /data/* && tar xvzf /backup-dir/${dump_name} -C /data . && chown -R steam:steam /data"

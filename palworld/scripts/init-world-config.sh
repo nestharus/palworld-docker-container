@@ -1,24 +1,16 @@
 #!/bin/bash
 
-# Define the path to the file
-FILE_PATH="/palworld/Pal/Saved/Config/LinuxServer/PalWorldSettings.ini"
+echo "Initializing World Configuration"
 
-owner=$(stat -c '%U' /palworld/Pal/Saved/SaveGames)
+PAL_WORLD_SETTINGS_FILEPATH="/palworld/Pal/Saved/Config/LinuxServer/PalWorldSettings.ini"
 
-if [ "$owner" != "steam" ]; then
-    chown -R steam:steam /palworld/Pal/Saved/SaveGames
+if [ -f "${PAL_WORLD_SETTINGS_FILEPATH}" ]; then
+    echo "World Configuration File Found"
+    echo "Removing World Configuration File"
+    chmod u+rw "${PAL_WORLD_SETTINGS_FILEPATH}"
+    rm ${PAL_WORLD_SETTINGS_FILEPATH}
 fi
 
-mkdir -p $(dirname $FILE_PATH)
-chown steam:steam "$(dirname $FILE_PATH)"
-
-if [ -f "$FILE_PATH" ]; then
-    rm $FILE_PATH
-fi
-
-echo "[/Script/Pal.PalGameWorldSettings]" > $FILE_PATH
-
-# Write the settings to the file
 SETTINGS="OptionSettings=("
 SETTINGS="${SETTINGS}Difficulty=${DIFFICULTY},"
 SETTINGS="${SETTINGS}DayTimeSpeedRate=${DAY_TIME_SPEED_RATE},"
@@ -83,38 +75,18 @@ SETTINGS="${SETTINGS}Region=\"${REGION}\","
 SETTINGS="${SETTINGS}bUseAuth=${USE_AUTH},"
 SETTINGS="${SETTINGS}BanListURL=\"${BAN_LIST_URL}\""
 
-SETTINGS="${SETTINGS}\)"
+SETTINGS="${SETTINGS})"
 
-echo "${SETTINGS}" > $FILE_PATH
-chown steam:steam $FILE_PATH
+cat << EOF > "${PAL_WORLD_SETTINGS_FILEPATH}"
+[/Script/Pal.PalGameWorldSettings]
+${SETTINGS}
 
-COMMAND="/palworld/PalServer.sh"
 
-COMMAND="${COMMAND} -port ${PORT}"
-COMMAND="${COMMAND} -players ${PLAYERS}"
+EOF
 
-if [ "${COMMUNITY}" = "true" ]; then
-    COMMAND="${COMMAND} EpicApp=PalServer"
+chown steam:steam "${PAL_WORLD_SETTINGS_FILEPATH}"
+chmod u-wx "${PAL_WORLD_SETTINGS_FILEPATH}"
 
-    if [ -n "${SERVER_PASSWORD}" ]; then
-        COMMAND="${COMMAND} -serverpassword ${SERVER_PASSWORD}"
-    fi
+echo "Wrote World Configuration File"
 
-    if [ -n "${SERVER_NAME}" ]; then
-        COMMAND="${COMMAND} -servername ${SERVER_NAME}"
-    fi
-fi
-
-if [ "${MULTITHREADING}" = "true" ]; then
-    COMMAND="${COMMAND} -useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS"
-fi
-
-if [ -n "${PUBLIC_IP}" ]; then
-    COMMAND="${COMMAND} -publicip=${PUBLIC_IP}"
-fi
-
-if [ -n "${PUBLIC_PORT}" ]; then
-    COMMAND="${COMMAND} -publicport=${PORT}"
-fi
-
-su steam -c "${COMMAND}"
+cat "${PAL_WORLD_SETTINGS_FILEPATH}"

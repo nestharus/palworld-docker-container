@@ -6,30 +6,28 @@ ARG PALWORLD_DIRECTORY
 
 COPY --chown=steam:steam ${SERVER_FILES} /palworld
 
+RUN apt-get update && \
+	apt-get -y install --no-install-recommends lib32gcc-s1 lib32stdc++6 lib32z1 && \
+	rm -rf /var/lib/apt/lists/*
+
+RUN chmod +x "/palworld/PalServer.sh"
+
 RUN mkdir ~/.steam
 RUN ln -s /palworld/linux64 /home/steam/.steam/sdk64
 RUN chown -R steam:steam /home/steam
 
 COPY --chown=steam:steam --chmod=+x ${PALWORLD_DIRECTORY}/scripts ./scripts
 
-RUN chmod +x "/palworld/PalServer.sh"
-
-RUN apt-get update && \
-	apt-get -y install --no-install-recommends lib32gcc-s1 lib32stdc++6 lib32z1 && \
-	rm -rf /var/lib/apt/lists/*
-
-RUN mkdir -p /palworld/Pal/Saved/SaveGames && chown -R steam:steam /palworld/Pal/Saved/SaveGames
 VOLUME ["/palworld/Pal/Saved/SaveGames"]
 
-ENV PLAYERS 32
-ENV COMMUNITY false
-ENV SERVER_PASSWORD password
-ENV SERVER_NAME name
-ENV PUBLIC_IP=1.1.1.1
-ENV PORT=8211
-ENV MULTITHREADING=true
-
-ENV DIFFICULTY=None \
+ENV PLAYERS 32 \
+    COMMUNITY false \
+    SERVER_PASSWORD password \
+    SERVER_NAME name \
+    PUBLIC_IP=1.1.1.1 \
+    PORT=8211 \
+    MULTITHREADING=true \
+    DIFFICULTY=None \
     DAY_TIME_SPEED_RATE=1.000000 \
     NIGHT_TIME_SPEED_RATE=1.000000 \
     EXP_RATE=1.000000 \
@@ -88,7 +86,4 @@ ENV DIFFICULTY=None \
     USE_AUTH=True \
     BAN_LIST_URL="https://api.palworldgame.com/api/banlist.txt"
 
-EXPOSE 8211/udp
-EXPOSE 25575/tcp
-
-ENTRYPOINT ./scripts/start.sh
+ENTRYPOINT ./scripts/entry.sh

@@ -60,6 +60,11 @@ containerId=$(docker ps -qf "name=${container}")
 
 # Copy data from the volumes to the host
 mkdir -p "${tempdir}"
+
 docker cp "${containerId}:${mount}" "${tempdir}"
-tar cvzf "${backupdir}/${timestamp}.tar.gz" -C "${tempdir}" .
+
+folder=$(basename "${mount}")
+
+tar cvzf "${backupdir}/${timestamp}.tar.gz" -C "${tempdir}/${folder}" .
+
 rm -rf "${tempdir}"
