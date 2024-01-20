@@ -1,35 +1,102 @@
+# First stage: Copy the files and change their ownership
+FROM cm2network/steamcmd:root as builder
+
+ARG SERVER_FILES
+ARG PALWORLD_DIRECTORY
+
+COPY ${SERVER_FILES} /palworld
+
+RUN chown -R steam:steam /palworld
+RUN chmod +x "/palworld/PalServer.sh"
+
+RUN mkdir ~/.steam
+RUN ln -s /palworld/linux64 /home/steam/.steam/sdk64
+RUN chown -R steam:steam /home/steam
+
+COPY ${PALWORLD_DIRECTORY}/scripts/start.sh /palworld-scripts
+RUN chown -R steam:steam /palworld-scripts
+RUN chmod +x "/palworld-scripts"
+
 FROM cm2network/steamcmd:root
 LABEL authors="nestharus"
-
-VOLUME ["/app/Pal/Saved/SaveGames"]
-VOLUME ["/app/Pal/Saved/Config"]
-
-COPY /target/app /app
-
-RUN chmod +x "/app/PalServer.sh"
-RUN chown -R steam:steam /app
-#RUN chmod -R 444 /app/Pal/Saved/Config/LinuxServer
+COPY --from=builder /palworld /palworld
+COPY --from=builder /home/steam /home/steam
+COPY --from=builder /palworld-scripts ./scripts
 
 RUN apt-get update && \
 	apt-get -y install --no-install-recommends lib32gcc-s1 lib32stdc++6 lib32z1 && \
 	rm -rf /var/lib/apt/lists/*
 
-RUN mkdir ~/.steam
-RUN ln -s /app/linux64 /home/steam/.steam/sdk64
-RUN chown -R steam:steam /home/steam
+VOLUME ["/palworld/Pal/Saved/SaveGames"]
 
-COPY /start.sh ./start.sh
-RUN chmod +x "./start.sh"
-
-ENV PALWORLD_PLAYERS 32
+ENV PLAYERS 32
 ENV COMMUNITY false
 ENV SERVER_PASSWORD password
 ENV SERVER_NAME name
 ENV PUBLIC_IP=1.1.1.1
-ENV PUBLIC_PORT=8211
+ENV PORT=8211
 ENV MULTITHREADING=true
+
+ENV DIFFICULTY=None \
+    DAY_TIME_SPEED_RATE=1.000000 \
+    NIGHT_TIME_SPEED_RATE=1.000000 \
+    EXP_RATE=1.000000 \
+    PAL_CAPTURE_RATE=1.000000 \
+    PAL_SPAWN_NUM_RATE=1.000000 \
+    PAL_DAMAGE_RATE_ATTACK=1.000000 \
+    PAL_DAMAGE_RATE_DEFENSE=1.000000 \
+    PLAYER_DAMAGE_RATE_ATTACK=1.000000 \
+    PLAYER_DAMAGE_RATE_DEFENSE=1.000000 \
+    PLAYER_STOMACH_DECREACE_RATE=1.000000 \
+    PLAYER_STAMINA_DECREACE_RATE=1.000000 \
+    PLAYER_AUTO_HP_REGENE_RATE=1.000000 \
+    PLAYER_AUTO_HP_REGENE_RATE_IN_SLEEP=1.000000 \
+    PAL_STOMACH_DECREACE_RATE=1.000000 \
+    PAL_STAMINA_DECREACE_RATE=1.000000 \
+    PAL_AUTO_HP_REGENE_RATE=1.000000 \
+    PAL_AUTO_HP_REGENE_RATE_IN_SLEEP=1.000000 \
+    BUILD_OBJECT_DAMAGE_RATE=1.000000 \
+    BUILD_OBJECT_DETERIORATION_DAMAGE_RATE=1.000000 \
+    COLLECTION_DROP_RATE=1.000000 \
+    COLLECTION_OBJECT_HP_RATE=1.000000 \
+    COLLECTION_OBJECT_RESPAWN_SPEED_RATE=1.000000 \
+    ENEMY_DROP_ITEM_RATE=1.000000 \
+    DEATH_PENALTY=All \
+    ENABLE_PLAYER_TO_PLAYER_DAMAGE=False \
+    ENABLE_FRIENDLY_FIRE=False \
+    ENABLE_INVADER_ENEMY=True \
+    ACTIVE_UNKO=False \
+    ENABLE_AIM_ASSIST_PAD=True \
+    ENABLE_AIM_ASSIST_KEYBOARD=False \
+    DROP_ITEM_MAX_NUM=3000 \
+    DROP_ITEM_MAX_NUM_UNKO=100 \
+    BASE_CAMP_MAX_NUM=128 \
+    BASE_CAMP_WORKER_MAX_NUM=15 \
+    DROP_ITEM_ALIVE_MAX_HOURS=1.000000 \
+    AUTO_RESET_GUILD_NO_ONLINE_PLAYERS=False \
+    AUTO_RESET_GUILD_TIME_NO_ONLINE_PLAYERS=72.000000 \
+    GUILD_PLAYER_MAX_NUM=20 \
+    PAL_EGG_DEFAULT_HATCHING_TIME=72.000000 \
+    WORK_SPEED_RATE=1.000000 \
+    IS_MULTIPLAY=False \
+    IS_PVP=False \
+    CAN_PICKUP_OTHER_GUILD_DEATH_PENALTY_DROP=False \
+    ENABLE_NON_LOGIN_PENALTY=True \
+    ENABLE_FAST_TRAVEL=True \
+    IS_START_LOCATION_SELECT_BY_MAP=True \
+    EXIST_PLAYER_AFTER_LOGOUT=False \
+    ENABLE_DEFENSE_OTHER_GUILD_PLAYER=False \
+    COOP_PLAYER_MAX_NUM=4 \
+    SERVER_DESCRIPTION="" \
+    ADMIN_PASSWORD="" \
+    SERVER_PASSWORD="" \
+    RCON_ENABLED=False \
+    RCON_PORT=25575 \
+    REGION="" \
+    USE_AUTH=True \
+    BAN_LIST_URL="https://api.palworldgame.com/api/banlist.txt"
 
 EXPOSE 8211/udp
 EXPOSE 25575/tcp
 
-ENTRYPOINT ./start.sh
+ENTRYPOINT ./scripts/start.sh

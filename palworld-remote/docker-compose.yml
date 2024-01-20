@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+#  nginx:
+#    image: ${DOCKER_REPO}:nginx
+#    ports:
+#      - "80:80/tcp"
+#      - "${PALWORLD_PORT}:${PALWORLD_PORT}/udp"
+#      - "${PALWORLD_RCON_PORT}:${PALWORLD_RCON_PORT}/tcp"
+#    networks:
+#      - backbone
+  palworld:
+    image: ${PALWORLD_REPOSITORY}:${PALWORLD_VERSION}
+    env_file:
+      - ./palworld/env/.default.env
+      - ./palworld/env/.override.env
+    ports:
+      - "${PALWORLD_PORT}:${PALWORLD_PORT}/udp"
+      - "${PALWORLD_RCON_PORT}:${PALWORLD_RCON_PORT}/tcp"
+    volumes:
+      - type: volume
+        source: PALWORLD_DATA
+        target: /palworld/Pal/Saved/SaveGames
+    restart: always
+
+volumes:
+  PALWORLD_DATA:

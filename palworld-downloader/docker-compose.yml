@@ -1,0 +1,14 @@
+version: '3.9'
+
+services:
+  palworld:
+    image: ${REPOSITORY}:${VERSION}
+    container_name: palworld-downloader
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - type: bind
+        source: ./downloaded
+        target: /downloaded
+    restart: no

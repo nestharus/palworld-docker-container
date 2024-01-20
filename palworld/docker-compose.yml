@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+  palworld:
+    image: ${REPOSITORY}:${VERSION}
+    container_name: palworld
+    build:
+      context: ..
+      dockerfile: ${PALWORLD_DIRECTORY}/Dockerfile
+      args:
+        - SERVER_FILES=${SERVER_FILES}
+        - PALWORLD_DIRECTORY=${PALWORLD_DIRECTORY}
+    volumes:
+      # need to download server files first!!
+      - type: volume
+        source: PALWORLD_DATA
+        target: /palworld/Pal/Saved/SaveGames
+volumes:
+  PALWORLD_DATA:
