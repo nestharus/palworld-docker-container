@@ -6,6 +6,10 @@ FILE_PATH="/palworld/Pal/Saved/Config/LinuxServer/PalWorldSettings.ini"
 mkdir -p $(dirname $FILE_PATH)
 chown steam:steam "$(dirname $FILE_PATH)"
 
+if [ -f "$FILE_PATH" ]; then
+    rm $FILE_PATH
+fi
+
 echo "[/Script/Pal.PalGameWorldSettings]" > $FILE_PATH
 
 # Write the settings to the file
