@@ -7,7 +7,7 @@ ARG PALWORLD_DIRECTORY
 COPY --chown=steam:steam ${SERVER_FILES} /palworld
 
 RUN apt-get update && \
-	apt-get -y install --no-install-recommends lib32gcc-s1 lib32stdc++6 lib32z1 && \
+	apt-get -y install --no-install-recommends lib32gcc-s1 lib32stdc++6 lib32z1 s3cmd cron && \
 	rm -rf /var/lib/apt/lists/*
 
 RUN chmod +x "/palworld/PalServer.sh"

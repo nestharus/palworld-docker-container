@@ -5,6 +5,7 @@
 #
 #   installs docker
 #   installs ftp server
+#   installs s3-cli
 
 apt update
 apt upgrade -y
