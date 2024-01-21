@@ -20,6 +20,14 @@
    - It points to my docker repo by default and you can't push to my repo grr
 3. pipenv run py push.py
 
+### Mods/Plugins
+1. From palworld-modded directory
+2. Modify .env VANILLA_REPOSITORY to point to vanilla server file image
+3. Modify .env MODDED_REPOSITORY to point to modded server file image that you will deploy
+4. Modify Dockerfile to copy mods/plugins
+5. pipenv run py push.py
+6. You will be using this image instead of the vanilla one in your server docker-compose.yml if you want mods and plugins
+
 # From Your Server! It's Time To Rock!!
 ### Prepare Your Server For Awesomeness
 1. After your server is deployed it should have docker and sftp on it
