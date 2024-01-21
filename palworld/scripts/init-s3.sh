@@ -37,7 +37,9 @@ if crontab -l | grep -q "${script_path}"; then
 else
     # Cron job does not exist, add it to the crontab
     echo "Backup cron job does not exist, adding it."
-    (crontab -l ; echo "${S3_BACKUP_PERIOD} ${script_path}") | crontab -
+    (crontab -l ; echo "${S3_BACKUP_PERIOD} S3_BUCKET=${S3_BUCKET} PUBLIC_IP=${PUBLIC_IP} S3_VOLUME=${S3_VOLUME} ${script_path}") | crontab -
 fi
 
 ./scripts/dump-game-state-to-s3.sh
+
+cron

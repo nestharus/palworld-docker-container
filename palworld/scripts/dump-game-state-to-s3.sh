@@ -17,8 +17,6 @@ if [ ! "$(ls -A /palworld/Pal/Saved/SaveGames/0)" ]; then
     exit 0
 fi
 
-backupdir="./volume/${volume}/backup"
-tempdir="./volume/${volume}/temp"
 timestamp=$(date +%Y%m%d%H%M%S)
 
 # Create the dump directory
