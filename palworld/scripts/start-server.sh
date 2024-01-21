@@ -13,10 +13,6 @@ if [ "${COMMUNITY}" = "true" ]; then
     COMMAND_ARGS="${COMMAND_ARGS} EpicApp=PalServer"
 
     echo "Community Server Enabled"
-
-    if [ -z "${SERVER_PASSWORD}" ]; then
-        echo "Warning: Server Password Is Not Set"
-    fi
 fi
 
 if [ -n "${SERVER_PASSWORD}" ]; then

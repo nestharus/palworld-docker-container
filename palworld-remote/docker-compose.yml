@@ -5,7 +5,12 @@ services:
     image: ${PALWORLD_REPOSITORY}:${PALWORLD_VERSION}
     container_name: palworld
     env_file:
+      # enable the presets you want!
       - ./palworld/env/.default.env
+      # - ./palworld/env/.casual.env
+      - ./palworld/env/.normal.env
+      # - ./palworld/env/.hard.env
+      # - ./palworld/env/.pvp.env
       - ./palworld/env/.override.env
     ports:
       - "${PALWORLD_PORT}:${PALWORLD_PORT}/udp"

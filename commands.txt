@@ -1,0 +1,10 @@
+/Save: This command will allow you to save your world's progress and data.
+/Info: This console command will display the server’s information.
+/DoExit: This command will close the current server.
+/Shutdown{Second}{Message Text}: This console command will shut down the server after the duration you put under “Seconds” for everyone playing on the server.
+/ShowPlayers: This console command will display a list of all the active players in the current server.
+/KickPlayer{Steam ID}: This console command will allow you to kick a particular player from the current server.
+/BanPlayer(Steam ID}: This command will allow you to ban a particular player from the current server.
+/TeleportToPlayer{Steam ID}: This Palworld console command will teleport you to a particular player.
+/TeleportToMe(Steam ID}: This command will teleport a particular player to you on the current server.
+/Broadcast{MessageText}: This console command will display a message to every player on the current server.
