@@ -14,6 +14,7 @@ services:
       - ./palworld/env/.override.env
     ports:
       - "${PALWORLD_PORT}:${PALWORLD_PORT}/udp"
+      - "${PALWORLD_QUERY_PORT}:${PALWORLD_QUERY_PORT}/udp"
       - "${PALWORLD_RCON_PORT}:${PALWORLD_RCON_PORT}/tcp"
     volumes:
       - type: volume
