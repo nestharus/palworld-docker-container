@@ -59,6 +59,10 @@
 ### How do I get my data archive from a random server that isn't on this??
 1. You'll need to tarball your /Pal/Saved/SaveGames folder
 2. The root of your tarball should be the 0 directory!
+3. If you are converting a local save to a server save here is how to include the host's player data
+   - https://github.com/xNul/palworld-host-save-fix
+4. If you have jolly corruption here is a tool to convert to .sav files to json and back so you can edit them
+   - https://gist.github.com/arawrshi/4a65a9aba62910f531d08e3b82e2fcdf
 
 ### How To Get Your Data Archive Into The Server For Backup
 1. From your palworld-remote folder
