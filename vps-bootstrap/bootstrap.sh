@@ -5,12 +5,11 @@
 #
 #   installs docker
 #   installs ftp server
-#   installs s3-cli
 
 apt update
 apt upgrade -y
 
-apt install ca-certificates curl gnupg
+apt install ca-certificates curl gnupg -Y
 install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 chmod a+r /etc/apt/keyrings/docker.gpg
@@ -23,9 +22,7 @@ echo \
 
 apt update
 
-apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
-
-apt install vsftpd -y
+apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin vsftpd  -y
 
 # Define the properties
 properties=("anonymous_enable=NO" "local_enable=YES" "write_enable=YES")
