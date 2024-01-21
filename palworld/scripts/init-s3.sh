@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Load environment variables
-source /path/to/your/env/file
-
 # Check if S3 backup is enabled
 if [ "$ENABLE_S3_BACKUP" = "false" ]
 then
