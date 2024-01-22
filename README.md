@@ -123,30 +123,29 @@ SERVER ADMIN STEPS
 
 PLAYER STEPS
 1. have the player download https://docs.docker.com/desktop/install/windows-install/
-2. backups are in /remote-local/volume/PALWORLD_DATA/backup
-3. ./restore-volume.sh --volume PALWORLD_DATA --dump-name EXAMPLE
+2. within remote-local
+3. docker volume create PALWORLD_DATA
 4. docker compose up
-5. join 127.0.0.1:8211
-6. if you can connect you're done
-7. if you cannot connect keep going
-8. ctrl + c once
-9. ./restore-volume.sh --volume PALWORLD_DATA --dump-name NEXT_DUMP
-10. docker compose up
-11. etc, etc
-12. Do this until you can connect!
-13. extract the 0 directory inside of the .tar.gz
-14. Store the .tar.gz file somewhere safe because we're going to need it later.
-15. we're going to start deleting .sav files until the server asks you to make a new character
-16. Go into 0 directory. Find the directory with the Players directory in it. Go into the Players directory.
-17. delete the first .sav file
-18. Note which .sav file you deleted 
-19. tar the 0 directory. The 0 directory should be in a directory by itself!!!
-20. Example using 20240122040001
-21. tar cvzf "20240122040001.tar.gz"
-22. Throw the modified backup into that backup directory and restore it with ./restore-volume
-23. Keep doing this until the server asks you to make a new character
-24. The name of the last .sav file you deleted is your guid. Hand the server admin the guid you found AND the backup that let you connect
-25. After you do that the server admin can restore you on live
+5. join server at 127.0.0.1:8211
+6. create character
+7. exit server
+8. ctrl + c once to bring server down
+9. ./display-volume.bat PALWORLD_DATA
+10. There will be a long .sav file like 00000000000000000000000000000000.sav
+11. The .sav file will be the player guid. NOTE IT!
+12. backups are in /remote-local/volume/PALWORLD_DATA/backup
+13. ./restore-volume.sh --volume PALWORLD_DATA --dump-name EXAMPLE
+14. docker compose up
+15. join 127.0.0.1:8211
+16. you can connect you're done
+17. if you cannot connect keep going
+18. ctrl + c
+19. ./restore-volume.bat --volume PALWORLD_DATA --dump-name NEXT_DUMP
+20. docker compose up
+21. etc, etc
+22. Do this until you can connect!
+23. Hand the server admin the guid you found AND the backup that let you connect
+24. After you do that the server admin can restore you on live
 
 SERVER ADMIN STEPS PART 2
 1. download uesave https://github.com/trumank/uesave-rs/releases
