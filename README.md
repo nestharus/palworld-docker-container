@@ -137,15 +137,16 @@ PLAYER STEPS
 13. extract the 0 directory inside of the .tar.gz
 14. Store the .tar.gz file somewhere safe because we're going to need it later.
 15. we're going to start deleting .sav files until the server asks you to make a new character
-16. go into the 0 directory and delete the first .sav file
-17. Note which .sav file you deleted 
-18. tar the 0 directory. The 0 directory should be in a directory by itself!!!
-19. Example using 20240122040001
-20. tar cvzf "20240122040001.tar.gz"
-21. Throw the modified backup into that backup directory and restore it with ./restore-volume
-22. Keep doing this until the server asks you to make a new character
-23. The name of the last .sav file you deleted is your guid. Hand the server admin the guid you found AND the backup that let you connect
-24. After you do that the server admin can restore you on live
+16. Go into 0 directory. Find the directory with the Players directory in it. Go into the Players directory.
+17. delete the first .sav file
+18. Note which .sav file you deleted 
+19. tar the 0 directory. The 0 directory should be in a directory by itself!!!
+20. Example using 20240122040001
+21. tar cvzf "20240122040001.tar.gz"
+22. Throw the modified backup into that backup directory and restore it with ./restore-volume
+23. Keep doing this until the server asks you to make a new character
+24. The name of the last .sav file you deleted is your guid. Hand the server admin the guid you found AND the backup that let you connect
+25. After you do that the server admin can restore you on live
 
 SERVER ADMIN STEPS PART 2
 1. download uesave https://github.com/trumank/uesave-rs/releases
