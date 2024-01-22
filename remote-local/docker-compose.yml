@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  palworld:
+    image: ${PALWORLD_REPOSITORY}:${PALWORLD_VERSION}
+    container_name: palworld
+    env_file:
+      # enable the presets you want!
+      - ./palworld/env/.default.env
+      # - ./palworld/env/.casual.env
+      - ./palworld/env/.normal.env
+      # - ./palworld/env/.hard.env
+      # - ./palworld/env/.pvp.env
+      - ./palworld/env/.override.env
+    ports:
+      - "${PALWORLD_PORT}:${PALWORLD_PORT}/udp"
+      - "${PALWORLD_QUERY_PORT}:${PALWORLD_QUERY_PORT}/udp"
+      - "${PALWORLD_RCON_PORT}:${PALWORLD_RCON_PORT}/tcp"
+    volumes:
+      - type: volume
+        source: PALWORLD_DATA
+        target: /palworld/Pal/Saved/SaveGames
+    restart: always
+
+volumes:
+  PALWORLD_DATA:
+    external: true
