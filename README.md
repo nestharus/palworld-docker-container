@@ -112,3 +112,41 @@
 ### Display Volume
 1. From palworld-remote folder `./display-volume.sh PALWORLD_DATA`
     - Edit file permissions in filezilla to have execute permission!
+
+# Player Troubleshooting
+
+### Infinite Loading Screen
+
+SERVER ADMIN STEPS
+1. added your backups to remote-local/volume/PALWORLD_DATA/backup
+2. zip up remote-local and send it to the player
+
+PLAYER STEPS
+1. have the player download https://docs.docker.com/desktop/install/windows-install/
+2. backups are in /remote-local/volume/PALWORLD_DATA/backup
+3. ./restore-volume.sh --volume PALWORLD_DATA --dump-name EXAMPLE
+4. docker compose up
+5. join 127.0.0.1:8211
+6. if you can connect you're done
+7. if you cannot connect keep going
+8. ctrl + c once
+9. ./restore-volume.sh --volume PALWORLD_DATA --dump-name NEXT_DUMP
+10. docker compose up
+11. etc, etc
+12. Do this until you can connect!
+13. extract the 0 directory inside of the .tar.gz
+14. Store the .tar.gz file somewhere safe because we're going to need it later.
+15. we're going to start deleting .sav files until the server asks you to make a new character
+16. go into the 0 directory and delete the first .sav file
+17. Note which .sav file you deleted 
+18. tar the 0 directory. The 0 directory should be in a directory by itself!!!
+19. Example using 20240122040001
+20. tar cvzf "20240122040001.tar.gz"
+21. Throw the modified backup into that backup directory and restore it with ./restore-volume
+22. Keep doing this until the server asks you to make a new character
+23. The name of the last .sav file you deleted is your guid. Hand the server admin the guid you found AND the backup that let you connect
+24. After you do that the server admin can restore you on live
+
+SERVER ADMIN STEPS PART 2
+1. download uesave https://github.com/trumank/uesave-rs/releases
+2. add it to path environment variables
