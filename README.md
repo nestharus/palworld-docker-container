@@ -117,36 +117,20 @@
 
 ### Infinite Loading Screen
 
-SERVER ADMIN STEPS
-1. added your backups to remote-local/volume/PALWORLD_DATA/backup
-2. zip up remote-local and send it to the player
+This currently checks for the missing player variant of the infinite loading screen.
+It may not detect the wiped player variant. A wiped player may still be in Level.sav.
 
-PLAYER STEPS
-1. have the player download https://docs.docker.com/desktop/install/windows-install/
-2. within remote-local
-3. docker volume create PALWORLD_DATA
-4. docker compose up
-5. join server at 127.0.0.1:8211
-6. create character
-7. exit server
-8. ctrl + c once to bring server down
-9. ./display-volume.bat PALWORLD_DATA
-10. There will be a long .sav file like 00000000000000000000000000000000.sav
-11. The .sav file will be the player guid. NOTE IT!
-12. backups are in /remote-local/volume/PALWORLD_DATA/backup
-13. ./restore-volume.sh --volume PALWORLD_DATA --dump-name EXAMPLE
-14. docker compose up
-15. join 127.0.0.1:8211
-16. you can connect you're done
-17. if you cannot connect keep going
-18. ctrl + c
-19. ./restore-volume.bat --volume PALWORLD_DATA --dump-name NEXT_DUMP
-20. docker compose up
-21. etc, etc
-22. Do this until you can connect!
-23. Hand the server admin the guid you found AND the backup that let you connect
-24. After you do that the server admin can restore you on live
+1. Go to tools
+2. Modify .env file
+3. Shut down your server
+4. Snapshot server with `./dump-volume.sh --volume PALWORLD_DATA`
+5. Download snapshot archive
+6. `pipenv run py ./restore_corrupt_players.py PATH_TO_SNAPSHOT_ARCHIVE`
+7. A restored archive will be created in the same directory as the snapshot archive
+8. Upload restored archive to server ./volume/PALWORLD_DATA/backup
+9. `./restore-volume.sh --volume PALWORLD_DATA --dump-name RESTORED_ARCHIVE_NAME`
+   - Don't include the .tar.gz extension in the name for dump-name parameter
 
-SERVER ADMIN STEPS PART 2
-1. download uesave https://github.com/trumank/uesave-rs/releases
-2. add it to path environment variables
+If you want to minimize server downtime you can identify the required backups beforehand
+and save them locally. When running restore_corrupt_players.py
+- `pipenv run py ./restore_corrupt_players.py PATH_TO_SNAPSHOT_ARCHIVE ./backup`

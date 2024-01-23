@@ -1,4 +1,6 @@
 palworld-downloader/downloaded/*
 remote/*
-tools/*
+tools/.env
+tools/tmp/*
+tools/backup/*
 .idea/*
