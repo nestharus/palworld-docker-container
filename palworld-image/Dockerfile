@@ -2,7 +2,6 @@
 FROM cm2network/steamcmd:root as builder
 
 ARG SERVER_FILES
-ARG PALWORLD_DIRECTORY
 
 COPY --chown=steam:steam ${SERVER_FILES} /palworld
 
@@ -16,7 +15,7 @@ RUN mkdir ~/.steam
 RUN ln -s /palworld/linux64 /home/steam/.steam/sdk64
 RUN chown -R steam:steam /home/steam
 
-COPY --chown=steam:steam --chmod=+x ${PALWORLD_DIRECTORY}/scripts ./scripts
+COPY --chown=steam:steam --chmod=+x ./scripts ./scripts
 
 VOLUME ["/palworld/Pal/Saved/SaveGames"]
 

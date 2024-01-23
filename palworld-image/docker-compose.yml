@@ -4,11 +4,10 @@ services:
   palworld:
     image: ${REPOSITORY}:${VERSION}
     build:
-      context: ..
-      dockerfile: ${PALWORLD_DIRECTORY}/Dockerfile
+      context: .
+      dockerfile: ./Dockerfile
       args:
         - SERVER_FILES=${SERVER_FILES}
-        - PALWORLD_DIRECTORY=${PALWORLD_DIRECTORY}
     volumes:
       - type: volume
         source: PALWORLD_DATA

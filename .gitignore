@@ -1,4 +1,4 @@
-palworld-downloader/downloaded/*
+palworld/downloader/downloaded/*
 remote/*
 remote-local/volume/*
 tools/.env
