@@ -9,8 +9,9 @@ from lib.backup import *
 from lib.sav import *
 
 parser = argparse.ArgumentParser(description="Fix snapshot of a Palworld server using older backup from S3")
-parser.add_argument('snapshot', type=str, help="Path to snapshot .tar.gz of Palworld Server")
-parser.add_argument('backup', type=str, nargs='?', default=None, help="Backup directory")
+parser.add_argument('--snapshot', type=str, required=True, help="Path to snapshot .tar.gz of Palworld Server")
+parser.add_argument('--backup', type=str, default=None, help="Backup directory")
+parser.add_argument('--guids', type=str, default=None, help="Comma separated list of guids to restore")
 args = parser.parse_args()
 
 load_dotenv()
@@ -32,10 +33,7 @@ if args.backup is None:
         config=Config(signature_version='s3v4')
     )
 
-with open(args.snapshot, 'rb') as f:
-    snapshot = f.read()
-snapshot_files, snapshot_tar_info = decompress_backup(snapshot)
-game_profile = find_latest_game_profile(snapshot_files, snapshot_tar_info)
+snapshot_files, snapshot_tar_info, game_profile = load_snapshot(args.snapshot)
 
 temp_directory = './tmp'
 snapshot_directory = f'{temp_directory}/snapshot'
@@ -46,24 +44,26 @@ dump_backup(snapshot_directory, snapshot_files, snapshot_tar_info)
 
 player_guids = {*get_player_guids(snapshot_files, snapshot_tar_info, game_profile)}
 
-print('Found .sav files for player guids')
-print(player_guids)
-
 world_to_json(snapshot_directory, game_profile)
 snapshot_level_json = load_world_json(snapshot_directory, game_profile)
-
+os.remove(f'{snapshot_directory}/0/{game_profile}/Level.sav.json')
+os.remove(f'{snapshot_directory}/0/{game_profile}/Level.sav.gvas')
+print(f"World Guid Count {len(get_world_guids(snapshot_level_json))}")
 world_guids = get_world_guids(snapshot_level_json)
-print('Found world guids for players')
-print(world_guids.keys())
 
-missing_player_guids = player_guids - world_guids.keys()
+if args.guids is None:
+    missing_player_guids = player_guids - world_guids.keys()
+else:
+    missing_player_guids = {*args.guids.split(',')}
 
 if len(missing_player_guids) == 0:
     print("No player guids to restore")
     shutil.rmtree('tmp')
     exit()
 
-world_guids = {key: world_guids[key] for key in (missing_player_guids & world_guids.keys())}
+print("Missing player guids")
+print(missing_player_guids)
+
 restored_player_guids = {*()}
 
 if s3 is None:
@@ -97,24 +97,39 @@ for file_name in file_list:
     world_to_json(backup_directory, game_profile)
     backup_level_json = load_world_json(backup_directory, game_profile)
     backup_world_guids = get_world_guids(backup_level_json)
+    backup_level_json = None
     backup_world_guids = {key: backup_world_guids[key] for key in (missing_player_guids & backup_world_guids.keys())}
 
     if len(backup_world_guids) == 0:
         print(f"No restorable world guids found in backup {file_name}")
         continue
 
+    backup_world_guids_to_patch = {key: backup_world_guids[key] for key in (world_guids & backup_world_guids.keys())}
+    backup_world_guids_to_add = {key: backup_world_guids[key] for key in (backup_world_guids.keys() - backup_world_guids_to_patch.keys())}
+
     restored_player_guids.update(backup_world_guids.keys())
     missing_player_guids = missing_player_guids - backup_world_guids.keys()
 
+    if len(backup_world_guids_to_add) > 0:
+        print(f'Adding world guids {backup_world_guids_to_add.keys()}')
+        get_world_records(snapshot_level_json).extend(backup_world_guids_to_add.values())
+
+    if len(backup_world_guids_to_patch) > 0:
+        print(f'Patching world guids {backup_world_guids_to_patch.keys()}')
+        world_records = get_world_records(snapshot_level_json)
+        for i, world_record in enumerate(world_records):
+            world_record_guid = get_world_record_guid(world_record)
+            if world_record_guid in backup_world_guids_to_patch:
+                print(f'Patching player into world {world_record_guid}')
+                world_records[i] = backup_world_guids[world_record_guid]
+
     for backup_guid, backup_record in backup_world_guids.items():
-        print(f'Restoring player {backup_guid}')
+        print(f'Restoring player .sav {backup_guid}')
 
         shutil.copy(
             f'{backup_directory}/0/{game_profile}/Players/{backup_guid.replace("-", "")}.sav',
             f'{snapshot_directory}/0/{game_profile}/Players/{backup_guid.replace("-", "")}.sav'
         )
-
-        world_guids[backup_guid] = backup_record
 
     shutil.rmtree(backup_directory)
 
@@ -130,26 +145,27 @@ if len(restored_player_guids) == 0:
     shutil.rmtree('tmp')
     exit()
 
+print(f"World Guid Count {len(get_world_guids(snapshot_level_json))}")
+
 print("Successfully restored player guids")
 print(restored_player_guids)
 
-patch_world_guid(snapshot_level_json, world_guids)
+save_world_json(snapshot_directory, game_profile, snapshot_level_json)
+snapshot_level_json = None
 world_to_sav(snapshot_directory, game_profile)
+os.remove(f'{snapshot_directory}/0/{game_profile}/Level.sav.json')
+os.remove(f'{snapshot_directory}/0/{game_profile}/Level.sav.gvas')
 
-for file in glob.glob(f'{snapshot_directory}/0/{game_profile}/Players/*.json'):
-    os.remove(file)
-
-for file in glob.glob(f'{snapshot_directory}/0/{game_profile}/*.json'):
-    os.remove(file)
-
-tarball = compress_backup(snapshot_files, snapshot_tar_info)
 base_filename = os.path.basename(args.snapshot)
-name, ext = os.path.splitext(base_filename)
-new_filename = name + ".restored" + ext
+name, gz = os.path.splitext(base_filename)
+name, tar = os.path.splitext(name)
+new_filename = name + ".restored" + tar + gz
 dir_name = os.path.dirname(args.snapshot)
 new_filepath = os.path.join(dir_name, new_filename)
 
-with open(new_filepath, 'wb') as f:
-    f.write(tarball.read())
+with tarfile.open(new_filepath, 'w:gz') as tar:
+    full_path = os.path.abspath(snapshot_directory)
+    relative_path = os.path.relpath(full_path, snapshot_directory)
+    tar.add(full_path, arcname='./')
 
-shutil.rmtree('tmp')
+shutil.rmtree(temp_directory)

@@ -5,13 +5,24 @@ import struct
 from io import BytesIO
 
 from lib.uesave import *
+from lib.backup import *
+
+
+def load_snapshot(snapshot_path):
+    with open(snapshot_path, 'rb') as f:
+        snapshot = f.read()
+
+    snapshot_files, snapshot_tar_info = decompress_backup(snapshot)
+    game_profile = find_latest_game_profile(snapshot_files, snapshot_tar_info)
+
+    return snapshot_files, snapshot_tar_info, game_profile
 
 
 def get_world_guids(level_sav_json):
     world_guids = {}
 
-    for record in level_sav_json['root']['properties']['worldSaveData']['Struct']['value']['Struct']['CharacterSaveParameterMap']['Map']['value']:
-        if record['key']['Struct']['Struct']['PlayerUId']['Struct']['value']['Guid'] != "00000000-0000-0000-0000-000000000000":
+    for record in get_world_records(level_sav_json):
+        if get_world_record_guid(record) != "00000000-0000-0000-0000-000000000000":
             guid = record['key']['Struct']['Struct']['PlayerUId']['Struct']['value']['Guid']
             guid = guid.upper()
             world_guids[guid] = record
@@ -31,18 +42,8 @@ def set_world_records(level_sav_json, records):
     level_sav_json['root']['properties']['worldSaveData']['Struct']['value']['Struct']['CharacterSaveParameterMap']['Map']['value'] = records
 
 
-def patch_world_guid(level_sav_json, world_guids):
-    records = [
-        world_guids[get_world_record_guid(record)]
-        if get_world_record_guid(record) in world_guids
-        else record
-        for record in get_world_records(level_sav_json)
-    ]
-
-    set_world_records(level_sav_json, records)
-
-
 def load_world_json(directory, game_profile):
+    print(f"Loading world json from {directory}/0/{game_profile}/Level.sav.json")
     with open(f'{directory}/0/{game_profile}/Level.sav.json', 'r') as f:
         data = json.load(f)
 
@@ -57,6 +58,7 @@ def load_player_json(directory, game_profile, player_guid):
 
 
 def save_world_json(directory, game_profile, data):
+    print(f"Saving world json as {directory}/0/{game_profile}/Level.sav.json")
     with open(f'{directory}/0/{game_profile}/Level.sav.json', 'w') as f:
         json.dump(data, f)
 
@@ -71,6 +73,7 @@ def world_to_json(directory, game_profile):
 
 
 def world_to_sav(directory, game_profile):
+    print(f"Converting json to sav {directory}/0/{game_profile}/Level.sav.json")
     json_to_sav(f'{directory}/0/{game_profile}/Level.sav.json')
 
 
@@ -120,17 +123,13 @@ def read_str(stream):
         return stream.read(length).decode('utf-16')
 
 
-def differentiate_bytes_and_strings(data):
-    result = ''
-    for byte in data:
-        char = chr(byte)
-        if char in string.printable:
-            result += char
-    return result
-
-
-def get_guild_user_guids(guild_bytes: bytes):
+def get_player_guid(guild_bytes: bytes, guild_name, player_name):
     guids = []
+
+    guild_name = guild_name.encode()
+
+    if guild_name not in guild_bytes:
+        return guids
 
     stream = BytesIO(guild_bytes)
     _unknown = stream.read(16)
@@ -140,35 +139,32 @@ def get_guild_user_guids(guild_bytes: bytes):
     # print(group_id)
     struct.unpack('I', stream.read(4))[0]
 
-    # guildless
-    if b'Unnamed Guild' in guild_bytes:
-        stream.seek(guild_bytes.index(b'Unnamed Guild') - 4)
-    elif b'Astrals Simps' in guild_bytes:
-        stream.seek(guild_bytes.index(b'Astrals Simps') - 4)
-    else:
-        strings = re.findall(r'[ -~]+', differentiate_bytes_and_strings(guild_bytes))
-        print(strings)
-        return guids
+    stream.seek(guild_bytes.index(guild_name) - 4)
 
-    group_name = read_str(stream)
-    print(group_name)
+    group_name = read_str(stream).decode('utf-8')
+    group_name = group_name.replace('\x00', '')
 
     hex_id = stream.read(16)
     # print(hex_id.hex())
 
     member_count = struct.unpack('I', stream.read(4))[0]
-    print(member_count)
+
+    print(f'{repr(group_name)}: ({member_count})')
+    print('='*50)
 
     for _ in range(member_count):
-        # print('='*50)
         hex_id = stream.read(16)
         hex_id = b''.join([hex_id[i:i+4][::-1] for i in range(0,len(hex_id),4)]) # fix byteorder
-        # guid
-        print(hex_id.hex())
-        guids.append(hex_id.hex()[2:34])
+        guid = hex_id.hex()
+        guid = guid.upper()
+        guid = guid[:8] + '-' + guid[8:12] + '-' + guid[12:16] + '-' + guid[16:20] + '-' + guid[20:]
         stream.read(4).hex()
         stream.read(4).hex()
-        # name
-        print(read_str(stream))
+        name = read_str(stream).decode('utf-8')
+        name = name.replace('\x00', '')
+        print(f'\t{repr(name)}: {repr(guid)}')
+
+        if name == player_name:
+            guids.append(guid)
 
     return guids

@@ -39,13 +39,7 @@ mkdir -p "${backupdir}"
 
 containerId=$(docker run -d --rm --mount source="${volume}",destination=/data ubuntu sleep infinity)
 
-folder_name=$(docker exec "${containerId}" bash -c "ls -d /data/*/ | head -n 1")
-
-mkdir -p "${tempdir}"
-docker cp "${containerId}:${folder_name}" "${tempdir}"
-
-tar cvzf "${backupdir}/${timestamp}.tar.gz" -C "${tempdir}" .
-
-rm -rf "${tempdir}"
+docker exec "$containerId" bash -c "cd /data && tar -czf ../data.tar.gz ."
+docker cp "$containerId:/data.tar.gz" "$backupdir/$timestamp.tar.gz"
 
 docker stop "${containerId}"
