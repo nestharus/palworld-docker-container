@@ -129,7 +129,7 @@ It may not detect the wiped player variant. A wiped player may still be in Level
 3. Shut down your server
 4. Snapshot server with `./dump-volume.sh --volume PALWORLD_DATA`
 5. Download snapshot archive
-6. `pipenv run py ./restore_corrupt_players.py PATH_TO_SNAPSHOT_ARCHIVE`
+6. `pipenv run py ./restore_corrupt_players.py --snapshot PATH_TO_SNAPSHOT_ARCHIVE`
 7. A restored archive will be created in the same directory as the snapshot archive
 8. Upload restored archive to server ./volume/PALWORLD_DATA/backup
 9. `./restore-volume.sh --volume PALWORLD_DATA --dump-name RESTORED_ARCHIVE_NAME`
@@ -137,7 +137,7 @@ It may not detect the wiped player variant. A wiped player may still be in Level
 
 If you want to minimize server downtime you can identify the required backups beforehand
 and save them locally. When running restore_corrupt_players.py
-- `pipenv run py ./restore_corrupt_players.py PATH_TO_SNAPSHOT_ARCHIVE ./backup`
+- `pipenv run py ./restore_corrupt_players.py --snapshot PATH_TO_SNAPSHOT_ARCHIVE --backup ./backup`
 
 ### Individual Player Rollback For All Other Issues
 
@@ -150,7 +150,7 @@ and save them locally. When running restore_corrupt_players.py
 4. Download snapshot archive
 5. Download archive you will be rolling player back to
 6. `pipenv run get_player_guid.py --snapshot "PATH_TO_BACKUP" --guild "GUILD_NAME" --name PLAYER_NAME`
-7. `pipenv run py ./restore_corrupt_players.py "PATH_TO_SNAPSHOT_ARCHIVE" --backup "PATH_TO_BACKUP_ARCHIVE --guids COMMA_SEPARATED_LIST_OF_GUIDS_TO_ROLLBACK`
+7. `pipenv run py ./restore_corrupt_players.py --snapshot "PATH_TO_SNAPSHOT_ARCHIVE" --backup "PATH_TO_BACKUP_ARCHIVE --guids COMMA_SEPARATED_LIST_OF_GUIDS_TO_ROLLBACK`
 8. A restored archive will be created in the same directory as the snapshot archive
 9. Upload restored archive to server ./volume/PALWORLD_DATA/backup
 10. `./restore-volume.sh --volume PALWORLD_DATA --dump-name RESTORED_ARCHIVE_NAME`
