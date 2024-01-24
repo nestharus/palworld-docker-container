@@ -1,7 +1,7 @@
-palworld/downloader/downloaded/*
-remote/*
-remote-local/volume/*
+image/downloader/downloaded/*
+local/volume/*
 tools/.env
-tools/tmp/*
 tools/backup*
+tools/snapshot/*
+settings/*
 .idea/*

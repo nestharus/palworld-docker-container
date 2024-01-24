@@ -30,7 +30,7 @@ echo "Snapshotting Game State Profile: ${folder_name}"
 tar -czf /tmp/palworld/${timestamp}.tar.gz -C "$folder_name" .
 
 # Upload the tar file to the S3 bucket
-s3cmd put /tmp/palworld/${timestamp}.tar.gz s3://${S3_BUCKET}/${PUBLIC_IP}/${S3_VOLUME}/
+s3cmd put /tmp/palworld/${timestamp}.tar.gz s3://${S3_BUCKET}/${S3_VOLUME}/${PUBLIC_IP}/
 
 # Remove the tar file
 rm /tmp/palworld/${timestamp}.tar.gz

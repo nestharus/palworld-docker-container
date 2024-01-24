@@ -1,21 +1,5 @@
-import json
-import re
-import string
 import struct
 from io import BytesIO
-
-from lib.uesave import *
-from lib.backup import *
-
-
-def load_snapshot(snapshot_path):
-    with open(snapshot_path, 'rb') as f:
-        snapshot = f.read()
-
-    snapshot_files, snapshot_tar_info = decompress_backup(snapshot)
-    game_profile = find_latest_game_profile(snapshot_files, snapshot_tar_info)
-
-    return snapshot_files, snapshot_tar_info, game_profile
 
 
 def get_world_guids(level_sav_json):
@@ -40,49 +24,6 @@ def get_world_records(level_sav_json):
 
 def set_world_records(level_sav_json, records):
     level_sav_json['root']['properties']['worldSaveData']['Struct']['value']['Struct']['CharacterSaveParameterMap']['Map']['value'] = records
-
-
-def load_world_json(directory, game_profile):
-    print(f"Loading world json from {directory}/0/{game_profile}/Level.sav.json")
-    with open(f'{directory}/0/{game_profile}/Level.sav.json', 'r') as f:
-        data = json.load(f)
-
-    return data
-
-
-def load_player_json(directory, game_profile, player_guid):
-    with open(f'{directory}/0/{game_profile}/Players/{player_guid.replace("-", "")}.sav.json', 'r') as f:
-        data = json.load(f)
-
-    return data
-
-
-def save_world_json(directory, game_profile, data):
-    print(f"Saving world json as {directory}/0/{game_profile}/Level.sav.json")
-    with open(f'{directory}/0/{game_profile}/Level.sav.json', 'w') as f:
-        json.dump(data, f)
-
-
-def save_player_json(directory, game_profile, player_guid, data):
-    with open(f'{directory}/0/{game_profile}/Players/{player_guid.replace("-", "")}.sav.json', 'w') as f:
-        json.dump(data, f)
-
-
-def world_to_json(directory, game_profile):
-    sav_to_json(f'{directory}/0/{game_profile}/Level.sav')
-
-
-def world_to_sav(directory, game_profile):
-    print(f"Converting json to sav {directory}/0/{game_profile}/Level.sav.json")
-    json_to_sav(f'{directory}/0/{game_profile}/Level.sav.json')
-
-
-def player_to_json(directory, game_profile, player_guid):
-    sav_to_json(f'{directory}/0/{game_profile}/Players/{player_guid.replace("-", "")}.sav')
-
-
-def player_to_sav(directory, game_profile, player_guid):
-    json_to_sav(f'{directory}/0/{game_profile}/Players/{player_guid.replace("-", "")}.sav.json')
 
 
 def is_player_blank(player_data):

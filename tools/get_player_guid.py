@@ -1,26 +1,40 @@
 import argparse
-import shutil
 
-from lib.backup import *
-from lib.sav import *
+from dotenv import load_dotenv
+from lib.save_archive.factory import save_archive_factory
+from lib.main_utils import find_game_profile
+from lib.save_archive.utils import get_game_profile_folder, get_level_file
+from lib.sav.gvas import decompress_gvas
+from lib.sav.uesave import gvas_to_json
+from lib.sav.sav import get_guilds, get_player_guid
 
 parser = argparse.ArgumentParser(description="Fix snapshot of a Palworld server using older backup from S3")
-parser.add_argument('--snapshot', type=str, required=True, help="Path to snapshot .tar.gz of Palworld Server")
+parser.add_argument('--snapshot', type=str, required=True, help="Path to snapshot of Palworld Server: .tar.gz (./0/...), S3 .tar.gz (./0/...), or folder (SNAPSHOT_NAME/0/...)")
+parser.add_argument('--profile', type=str, default=None, help="Game profile to use (/0/profileid)")
 parser.add_argument('--guild', type=str, required=True, help="Name of guild")
 parser.add_argument('--name', type=str, required=True, help="Name of player")
 args = parser.parse_args()
 
-snapshot_files, snapshot_tar_info, game_profile = load_snapshot(args.snapshot)
+load_dotenv()
 
-temp_directory = './tmp'
-snapshot_directory = f'{temp_directory}/snapshot'
-os.makedirs(snapshot_directory, exist_ok=True)
+snapshot_archive = save_archive_factory(args.snapshot)
+snapshot = snapshot_archive.load()
 
-dump_backup(snapshot_directory, snapshot_files, snapshot_tar_info)
+print(f'Loaded snapshot {args.snapshot}')
 
-world_to_json(snapshot_directory, game_profile)
-snapshot_level_json = load_world_json(snapshot_directory, game_profile)
-shutil.rmtree(temp_directory)
+game_profile = find_game_profile(snapshot, args.profile)
+
+if game_profile is None:
+    exit()
+
+print(f'Using game profile: {game_profile}')
+
+snapshot_game_profile_folder = get_game_profile_folder(snapshot, game_profile)
+
+print(f'Loading snapshot level')
+snapshot_level_name = get_level_file(snapshot, snapshot_game_profile_folder)
+snapshot_level_gvas, snapshot_level_gvas_type = decompress_gvas(snapshot[snapshot_level_name])
+snapshot_level_json = gvas_to_json(snapshot_level_gvas)
 
 guilds = get_guilds(snapshot_level_json)
 guids = [
