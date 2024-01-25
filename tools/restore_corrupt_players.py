@@ -118,11 +118,14 @@ for backup_name in backup_names:
                 print(f'Patching player into world {world_record_guid}')
                 world_records[i] = backup_world_guids[world_record_guid]
 
-    for backup_guid, backup_record in backup_world_guids.items():
+    for backup_guid in backup_world_guids.keys():
         print(f'Restoring player .sav {backup_guid}')
 
-        print(f'Writing backup.{get_player_file(backup, backup_game_profile_folder, backup_guid)} to snapshot.{get_player_file(snapshot, snapshot_game_profile_folder, backup_guid)}')
-        snapshot[get_player_file(snapshot, snapshot_game_profile_folder, backup_guid)] = backup[get_player_file(backup, backup_game_profile_folder, backup_guid)]
+        backup_player_file = get_player_file(backup, backup_game_profile_folder, backup_guid)
+        snapshot_player_file = get_player_file(snapshot, snapshot_game_profile_folder, backup_guid)
+
+        print(f'Writing backup.{backup_player_file} to snapshot.{snapshot_player_file}')
+        snapshot[snapshot_player_file] = backup[backup_player_file]
 
     if len(missing_player_guids) == 0:
         break
@@ -144,6 +147,4 @@ snapshot_level_gvas = json_to_gvas(snapshot_level_json)
 snapshot[snapshot_level_name] = compress_gvas(snapshot_level_gvas, snapshot_level_gvas_type)
 
 print(f'Saving snapshot as {snapshot_archive.path}.restored')
-print(snapshot.keys())
-
 snapshot_archive.save_as(path=f'{snapshot_archive.path}.restored')

@@ -52,16 +52,22 @@ def compress_backup(files, tar_info):
 
     with tarfile.open(fileobj=tar_data, mode='w:gz') as tar:
         # First, add directories
-        for file_name, file_content in files.items():
+        for file_name, file_content in sorted(files.items()):
             info = tar_info[file_name]
             if file_content is None:
+                print(file_name)
                 tar.addfile(info)
 
         # Then, add files
         for file_name, file_content in files.items():
             info = tar_info[file_name]
             if file_content is not None:
-                tar.addfile(info, io.BytesIO(file_content))
+                print(file_name)
+                info.size = len(file_content)
+                if len(file_content) == 0:
+                    tar.addfile(info)
+                else:
+                    tar.addfile(info, io.BytesIO(file_content))
 
     tar_data.seek(0)
 
