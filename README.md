@@ -23,9 +23,5 @@ Used to run the image on a remote server. Upload this folder to the remote serve
 ### Local Folder
 Used to run the server locally for testing.
 
-### Run Locally
-1. cd remote-local
-2. docker-compose up
-
 ### Tools
 1. Used to repair player data
