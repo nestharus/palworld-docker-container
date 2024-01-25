@@ -136,7 +136,6 @@ if len(missing_player_guids) != 0:
 
 if len(restored_player_guids) == 0:
     print("No player guids restored")
-    shutil.rmtree('tmp')
     exit()
 
 print('Successfully restored player guids')
