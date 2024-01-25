@@ -2,7 +2,7 @@
 This is used to repair infinite loading screen and any arbitrary bugs.
 The script has two functions. Only one function can operate at a time.
 1. Rollback individual players
-2. Readd players to Level.sav
+2. Write missing players to Level.sav
 
 ### Arguments
 1. --snapshot
