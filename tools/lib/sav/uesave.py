@@ -1,5 +1,4 @@
 import json
-import shutil
 import subprocess
 
 
@@ -40,7 +39,6 @@ def json_to_gvas(json_data, uesave_path="./lib/sav/uesave"):
 
     if uesave_run.returncode != 0:
         print(f'uesave.exe failed to convert to gvas (return {uesave_run.returncode})')
-        shutil.rmtree('./tmp')
         return None
 
     return uesave_run.stdout
@@ -54,7 +52,6 @@ def gvas_to_json(gvas: bytes, uesave_path="./lib/sav/uesave"):
         print(f'uesave.exe failed to convert (return {uesave_run.returncode})')
         print(uesave_run.stdout.decode('utf-8'))
         print(uesave_run.stderr.decode('utf-8'))
-        shutil.rmtree('./tmp')
         return None
 
     json_data = uesave_run.stdout
